@@ -1,107 +1,107 @@
 #include <iostream>
+#include <string>
+#include "Merkel.h"
 
-
-void printMenu() 
+/**
+ * Computes the average price of the given list of order book entries.
+ *
+ * @param entries The list of order book entries
+ *
+ * @return The average price
+ *
+ * @throws None
+ */
+double computeAveragePrice(std::vector<OrderBookEntry>& entries) 
 {
-    // 1. Print help -> instruction for the app
-    std::cout << "1: Print help" << std::endl;
-    // 2. Print exchange stats -> current internal statistics like offers, bids etc.
-    std::cout << "2: Print exchange stats" << std::endl;
-    // 3. Make an offer -> what I've got to sell
-    std::cout << "3: Make an offer" << std::endl;
-    // 4. Make a bid -> what I would like to buy
-    std::cout << "4: Make a bid" << std::endl;
-    // 5. Print wallet -> current balance of my assets
-    std::cout << "5: Print wallet" << std::endl;
-    // 6. Continue -> got to next time step
-    std::cout << "6: Continue" << std::endl;
-    std::cout << "========================" << std::endl;
-    std::cout << "Type in 1-6: " << std::endl;
-}
-
-void printHelp() 
-{
-    std::cout << "Help - your aim is to make big money. Analyse the market and make bids and offers!" << std::endl;
-    std::cout << std::endl;
-}
-
-void printMarketStats() 
-{
-    std::cout << "Market looks godd!" << std::endl;
-    std::cout << std::endl;
-}
-
-void enterOffer() 
-{
-    std::cout << "Make an offer - enter the amount" << std::endl;
-    std::cout << std::endl;
-}
-
-void enterBid() 
-{
-    std::cout << "Make a bid - enter the amount" << std::endl;
-     std::cout << std::endl;
-}
-
-void printWallet() 
-{
-    std::cout << "Your wallet is empty!" << std::endl;
-    std::cout << std::endl;
-}
-
-void gotToNextTimeFrame() 
-{
-    std::cout << "Going to next time frame..." << std::endl;
-     std::cout << std::endl;
-}
-
-void processUserOption(int userOption) 
-{
-    switch (userOption)
-    {
-        case 1:
-            printHelp();
-            break;
-        case 2:
-            printMarketStats();
-            break;
-        case 3:
-            enterOffer();
-            break;
-        case 4:
-            enterBid();
-            break;
-        case 5:
-            printWallet();
-            break;
-        case 6:
-            gotToNextTimeFrame();
-            break;
-        default:
-            std::cout << "Invalid choice. Choose 1-6!" << std::endl;
-            std::cout << std::endl;
-            break;
+    if (entries.empty()) {
+        return 0;
     }
+    double sum = 0;
+    for (OrderBookEntry& entry : entries) {
+        sum += entry.price;
+    }
+    return sum / entries.size();
 }
 
-
-int getUserOption() 
+/**
+ * Computes the lowest price from the given list of order book entries.
+ *
+ * @param entries the list of order book entries
+ *
+ * @return the lowest price
+ *
+ * @throws None
+ */
+double computeLowPrice(std::vector<OrderBookEntry>& entries) 
 {
-    // getting user input
-    int userOption;
-    std::cin >> userOption;
-    std::cout << "You chose: " << userOption << std::endl;
-    return userOption;
+    double lowPrice = entries[0].price;
+    for (OrderBookEntry& entry : entries) {
+        if (entry.price < lowPrice) {
+            lowPrice = entry.price;
+        }
+    }
+    return lowPrice;
+}
+
+/**
+ * Computes the highest price from a vector of OrderBookEntry.
+ *
+ * @param entries the vector of OrderBookEntry
+ *
+ * @return the highest price
+ *
+ * @throws None
+ */
+double computeHighPrice(std::vector<OrderBookEntry>& entries) 
+{
+    double highPrice = entries[0].price;
+    for (OrderBookEntry& entry : entries) {
+        if (entry.price > highPrice) {
+            highPrice = entry.price;
+        }
+    }
+    return highPrice;
+}
+
+/**
+ * Computes the price spread of the given vector of order book entries.
+ *
+ * @param entries the vector of order book entries
+ *
+ * @return the price spread
+ */
+double computePriceSpread(std::vector<OrderBookEntry>& entries) 
+{
+    double maxPrice = computeHighPrice(entries);
+    double minPrice = computeLowPrice(entries);
+    return maxPrice - minPrice;
 }
 
 int main()
 {
-    while (true)
+    std::vector<OrderBookEntry> entries;
+    entries.push_back(OrderBookEntry(1000, 0.9, "2020/03/17 17:01:24.884492", "BTC/USD", OrderBookType::bid));
+    entries.push_back(OrderBookEntry(2000, 0.7, "2020/03/17 17:01:23.884492", "BTC/USD", OrderBookType::ask));
+    entries.push_back(OrderBookEntry(1100, 0.4, "2020/03/17 17:01:24.884492", "BTC/USD", OrderBookType::bid));
+
+    for (unsigned int i = 0; i < entries.size(); ++i)
     {
-        printMenu();
-        int option = getUserOption();
-        processUserOption(option);
+        std::string orderTypeStr = (entries[i].orderType == OrderBookType::bid) ? "bid" : "ask";
+        std::cout << "Data of the entry number " << i << " is: " 
+        << " price: " << entries[i].price  
+        << ", amount: " << entries[i].amount 
+        << ", product: " << entries[i].product 
+        << ", orderType: " << orderTypeStr
+        << std::endl;
     }
+
+    std::cout << "Avarage price of given entries is: " << computeAveragePrice(entries) << std::endl;
+    std::cout << "Hightest price of given entries is: " << computeHighPrice(entries) << std::endl;
+    std::cout << "Lowest price of given entries is: " << computeLowPrice(entries) << std::endl;
+    std::cout << "Price spread of given entries is: " << computePriceSpread(entries) << std::endl;
+
+    Merkel app{};
+    app.init();
 
     return 0;
 }
