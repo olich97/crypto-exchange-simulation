@@ -1,5 +1,6 @@
 {
     "files.associations": {
+        "vector": "cpp",
         "__bit_reference": "cpp",
         "__config": "cpp",
         "__debug": "cpp",
@@ -29,7 +30,9 @@
         "cwchar": "cpp",
         "cwctype": "cpp",
         "exception": "cpp",
+        "fstream": "cpp",
         "initializer_list": "cpp",
+        "iomanip": "cpp",
         "ios": "cpp",
         "iosfwd": "cpp",
         "iostream": "cpp",
@@ -51,12 +54,6 @@
         "typeinfo": "cpp",
         "unordered_map": "cpp",
         "variant": "cpp",
-        "vector": "cpp",
-        "algorithm": "cpp",
-        "__tree": "cpp",
-        "map": "cpp",
-        "fstream": "cpp",
-        "iomanip": "cpp",
-        "type_traits": "cpp"
+        "algorithm": "cpp"
     }
 }

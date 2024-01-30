@@ -10,3 +10,12 @@ OrderBookEntry::OrderBookEntry( double _price,
   timestamp(_timestamp), 
   product(_product), 
   orderType(_orderType) {}
+
+
+  
+OrderBookType OrderBookEntry::stringToOrderBookType(std::string s) 
+{
+  if (s == "bid") return OrderBookType::bid;
+  else if (s == "ask")  return OrderBookType::ask;
+  else return OrderBookType::unknown;
+}
