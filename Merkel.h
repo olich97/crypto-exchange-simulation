@@ -2,23 +2,25 @@
 
 #include <vector>
 #include "OrderBookEntry.h"
+#include "OrderBook.h"
 
 class Merkel 
 {
     public:
         Merkel();
-        void init();    
+        void init();
     private:
-        void loadOrderBook();
         void printMenu();
         void printHelp();
         void printMarketStats();
-        void enterOffer();
+        void enterAsk();
         void enterBid();
         void printWallet();
         void gotToNextTimeFrame();
         void processUserOption(int userOption);
         int getUserOption();
 
-         std::vector<OrderBookEntry> orders;
+        std::string currentTime;
+
+        OrderBook orderBook{"test.csv"};
 };

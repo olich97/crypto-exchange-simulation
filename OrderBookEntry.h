@@ -2,7 +2,7 @@
 
 #include <string>
 
-enum class OrderBookType{bid, ask, unknown};
+enum class OrderBookType{bid, ask, sale, unknown};
 
 class OrderBookEntry 
 {
@@ -15,6 +15,10 @@ class OrderBookEntry
                         OrderBookType _orderType );
 
         static OrderBookType stringToOrderBookType(std::string s);
+
+        static bool compareByTimestamp(const OrderBookEntry& o1, const OrderBookEntry& o2);
+        static bool compareByPriceAsc(const OrderBookEntry& o1, const OrderBookEntry& o2);
+        static bool compareByPriceDesc(const OrderBookEntry& o1, const OrderBookEntry& o2);
 
         double price;
         double amount;
