@@ -8,9 +8,7 @@
 
 int main()
 {
-
     Merkel app{};
     app.init();
-
     return 0;
 }

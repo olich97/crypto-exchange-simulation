@@ -11,10 +11,12 @@ void Merkel::init()
 {
     int input;
     currentTime = orderBook.getEarliestTime();
+    wallet.insertCurrency("BTC", 10);
     while(true) 
     {
         printMenu();
         input = getUserOption();
+        std::cout << std::endl;
         processUserOption(input);
     }
 }
@@ -48,6 +50,7 @@ void Merkel::printMarketStats()
 {
     for (const std::string& p : orderBook.getKnownProducts()) 
     {
+        std::cout << "''''''''''''''''''''''" <<std::endl;
         std::cout << "Product: " << p << std::endl;
         std::vector<OrderBookEntry> asks = orderBook.getOrders(OrderBookType::ask, p, currentTime);
         std::cout << "Asks seen: " << asks.size() << std::endl;
@@ -58,8 +61,9 @@ void Merkel::printMarketStats()
         std::cout << "Bids seen: " << bids.size() << std::endl;
         std::cout << "Max bid: " << OrderBook::getHighPrice(bids) << std::endl;
         std::cout << "Min bid: " << OrderBook::getLowPrice(bids) << std::endl;
-
+        std::cout << "''''''''''''''''''''''" <<std::endl;
     }
+    std::cout << std::endl;
 }
 
 void Merkel::enterAsk() 
@@ -81,7 +85,16 @@ void Merkel::enterAsk()
                                                      currentTime, 
                                                      tokens[0], 
                                                      OrderBookType::ask);
-            orderBook.insertOrder(obe);
+            obe.username = "simuser";
+            if (wallet.canFullfillOrder(obe)) 
+            {
+                std::cout << "Wallet looks good, order inserted!" << std::endl;
+                orderBook.insertOrder(obe);
+            } 
+            else 
+            {
+                std::cout << "Wallet cannot fullfill order, insufficiant funds!" << std::endl;
+            }
         } 
         catch (const std::exception& e) 
         {
@@ -89,7 +102,7 @@ void Merkel::enterAsk()
         }
         
     }
-    std::cout << "You typed: " << input <<std::endl;
+    std::cout << std::endl;
 }
 
 void Merkel::enterBid() 
@@ -111,7 +124,16 @@ void Merkel::enterBid()
                                                      currentTime, 
                                                      tokens[0], 
                                                      OrderBookType::bid);
-            orderBook.insertOrder(obe);
+            obe.username = "simuser";
+            if (wallet.canFullfillOrder(obe)) 
+            {
+                orderBook.insertOrder(obe);
+                std::cout << "Wallet looks good, order inserted!" << std::endl;
+            } 
+            else 
+            {
+                std::cout << "Wallet cannot fullfill order, insufficiant funds!" << std::endl;
+            }
         } 
         catch (const std::exception& e) 
         {
@@ -119,12 +141,15 @@ void Merkel::enterBid()
         }
         
     }
-    std::cout << "You typed: " << input <<std::endl;
+    std::cout << std::endl;
 }
 
 void Merkel::printWallet() 
 {
-    std::cout << "Your wallet is empty!" << std::endl;
+    std::cout << "*******************" << std::endl;
+    std::cout << "Here your wallet: " << std::endl;
+    std::cout << wallet.toString();
+    std::cout << "*******************" << std::endl;
     std::cout << std::endl;
 }
 
@@ -139,9 +164,15 @@ void Merkel::gotToNextTimeFrame()
         for (OrderBookEntry& sale : sales)
         {
             std::cout << "Sale price: " << sale.price << ", amount: " << sale.amount << std::endl;
+            if (sale.username == "simuser")
+            {
+                // update the wallet
+                wallet.processSale(sale);
+            }
         }
     }
     currentTime = orderBook.getNextTime(currentTime);
+    std::cout << std::endl;
 }
 
 void Merkel::processUserOption(int userOption) 
